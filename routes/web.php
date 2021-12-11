@@ -28,6 +28,7 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->group(function(){
     Route::get('/dashboard', [DashboardController::class, "index"])->name('dashboard');
     Route::get('/quizzes/{quiz}', [QuizController::class, "takeQuiz"])->name('quizzes.take');
+    Route::post('/quizzes/{quiz}', [QuizController::class, "submit"])->name('quizzes.submit');
 });
 
 require __DIR__.'/auth.php';

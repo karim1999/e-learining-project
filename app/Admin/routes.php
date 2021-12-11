@@ -15,5 +15,5 @@ Route::group([
     $router->resource('users', UserController::class);
     $router->resource('quizzes', QuizController::class);
     $router->resource('questions', QuestionController::class);
-    $router->resource('answers', AnswerController::class);
+    $router->resource('assessments', AssessmentController::class);
 });

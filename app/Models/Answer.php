@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Answer extends Model
 {
     use HasFactory;
+    public function assessment(){
+        return $this->belongsTo(Assessment::class);
+    }
 }

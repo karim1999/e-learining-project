@@ -61,7 +61,7 @@ export default function Dashboard({auth, errors, quizzes}) {
                                         {quiz.score || "-"}
                                     </TableTd>
                                     <TableTd>
-                                        {quiz.score ? "-" : (
+                                        {(quiz.score || moment(quiz.end_date).isBefore()) ? "-" : (
                                             <Link href={route('quizzes.take', {quiz: quiz.id})}>
                                                 <Button>
                                                     Start
