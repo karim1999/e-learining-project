@@ -17,7 +17,7 @@ class CreateOptionsTable extends Migration
             $table->id();
             $table->foreignId('question_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->mediumText('title');
-            $table->boolean('correct');
+            $table->boolean('correct')->default(0);
             $table->timestamps();
         });
     }
