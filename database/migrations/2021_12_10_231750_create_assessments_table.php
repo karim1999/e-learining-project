@@ -17,9 +17,9 @@ class CreateAssessmentsTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('quiz_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->timestamp('started_at')->useCurrent();
+            $table->timestampTz('started_at')->useCurrent();
             $table->integer('score')->default(0);
-            $table->timestamp('finished_at')->nullable();
+            $table->timestampTz('finished_at')->nullable();
             $table->timestamps();
         });
     }

@@ -18,8 +18,8 @@ class CreateQuizzesTable extends Migration
             $table->string('title');
             $table->longText('description')->nullable();
             $table->integer('duration')->default(30);
-            $table->timestamp('start_date')->useCurrent();
-            $table->timestamp('end_date')->useCurrent();
+            $table->timestampTz('start_date')->useCurrent();
+            $table->timestampTz('end_date')->useCurrent();
             $table->timestamps();
         });
     }

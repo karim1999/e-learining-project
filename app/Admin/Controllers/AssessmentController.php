@@ -29,14 +29,17 @@ class AssessmentController extends AdminController
         $grid = new Grid(new Assessment());
 
         $grid->column('id', __('Id'));
-        $grid->column('user.name', __('User id'));
-        $grid->column('quiz.title', __('Quiz id'));
-        $grid->column('started_at', __('Started at'));
-        $grid->column('score', __('Score'));
-        $grid->column('finished_at', __('Finished at'));
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
+        $grid->column('user.name', __('User'));
+        $grid->column('quiz.title', __('Quiz'));
+        $grid->column('started_at', __('Started at'))->diffForHumans();
+        $grid->column('score', __('Score'))->display(function ($value){
+            return $value."/".$this->quiz->questions->count();
+        })->badge();
+        $grid->column('finished_at', __('Finished at'))->diffForHumans();
+        $grid->column('created_at', __('Created at'))->diffForHumans();
+        $grid->column('updated_at', __('Updated at'))->diffForHumans();
 
+        $grid->disableCreateButton();
         return $grid;
     }
 
@@ -51,14 +54,23 @@ class AssessmentController extends AdminController
         $show = new Show(Assessment::findOrFail($id));
 
         $show->field('id', __('Id'));
-        $show->field('user.name', __('User id'));
-        $show->field('quiz.title', __('Quiz id'));
-        $show->field('started_at', __('Started at'));
+        $show->field('user.name', __('User'));
+        $show->field('quiz.title', __('Quiz'));
+        $show->field('started_at', __('Started at'))->diffForHumans();
         $show->field('score', __('Score'));
-        $show->field('finished_at', __('Finished at'));
-        $show->field('created_at', __('Created at'));
-        $show->field('updated_at', __('Updated at'));
+        $show->field('finished_at', __('Finished at'))->diffForHumans();
+        $show->field('created_at', __('Created at'))->diffForHumans();
+        $show->field('updated_at', __('Updated at'))->diffForHumans();
+        $show->answers('Answers', function ($answer) {
 
+            $answer->resource('/admin/answers');
+
+            $answer->id();
+            $answer->column('question.title', __('Quiz'));
+            $answer->column('option.title', __('Quiz'));
+            $answer->column('correct', __('Is Correct'))->bool();
+            $answer->disableCreateButton();
+        });
         return $show;
     }
 

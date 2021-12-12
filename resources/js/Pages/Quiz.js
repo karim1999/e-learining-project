@@ -1,14 +1,33 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import Authenticated from '@/Layouts/Authenticated';
 import {Head} from '@inertiajs/inertia-react';
 import Button from "@/Components/Button";
 import {Inertia} from "@inertiajs/inertia";
-export default function({auth, errors, quiz, questions}) {
+import moment from "moment";
+import Alert from "@/Components/Alert";
+
+export default function({auth, errors, quiz, questions, assessment}) {
     const [answers, setAnswers]= useState(questions.map(question => ({
         question_id: question.id,
         option_id: null
     })));
     const [isLoading, setIsLoading]= useState(false);
+    const [remainingText, setRemainingText]= useState(null);
+    const timerCallback = useCallback(() => {
+        setRemainingText(moment(assessment.started_at).add(quiz.duration, 'm').fromNow());
+        if(moment(assessment.started_at).add(quiz.duration, 'm').isBefore()){
+            onSubmit(null)
+        }
+
+    }, [remainingText])
+    const timerRef = useRef(0);
+    useEffect(() => {
+        timerRef.current = setInterval(timerCallback, 1000);
+
+        return () => {
+            clearInterval(timerRef.current);
+        }
+    }, [assessment.started_at]);
     const onSelectOption= (question_id, option_id) => {
         let tempAnswers= [...answers];
         tempAnswers.find(answer => answer.question_id === question_id).option_id= option_id;
@@ -16,7 +35,7 @@ export default function({auth, errors, quiz, questions}) {
     }
     const onSubmit= async (e) => {
         setIsLoading(true);
-        e.preventDefault()
+        e?.preventDefault()
         await Inertia.post(route('quizzes.submit', {quiz: quiz.id}), {answers})
         setIsLoading(false);
     }
@@ -27,14 +46,21 @@ export default function({auth, errors, quiz, questions}) {
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Dashboard</h2>}
         >
             <Head title={quiz.title} />
-
-            <div className="py-5">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6 bg-white border-b border-gray-200">{quiz.description}</div>
+            {remainingText && (
+                <Alert>
+                    {remainingText}
+                </Alert>
+            )}
+            {
+                quiz?.description &&
+                    <div className="py-5">
+                        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                                <div className="p-6 bg-white border-b border-gray-200">{quiz.description}</div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
+            }
             <div>
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white p-12 rounded-lg shadow-lg w-full mt-8">

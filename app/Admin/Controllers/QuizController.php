@@ -31,10 +31,10 @@ class QuizController extends AdminController
         $grid->column('title', __('Title'));
         $grid->column('description', __('Description'));
         $grid->column('duration', __('Duration'));
-        $grid->column('start_date', __('Start date'));
-        $grid->column('end_date', __('End date'));
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
+        $grid->column('start_date', __('Start date'))->diffForHumans();
+        $grid->column('end_date', __('End date'))->diffForHumans();
+        $grid->column('created_at', __('Created at'))->diffForHumans();
+        $grid->column('updated_at', __('Updated at'))->diffForHumans();
 
         return $grid;
     }
@@ -53,10 +53,10 @@ class QuizController extends AdminController
         $show->field('title', __('Title'));
         $show->field('description', __('Description'));
         $show->field('duration', __('Duration'));
-        $show->field('start_date', __('Start date'));
-        $show->field('end_date', __('End date'));
-        $show->field('created_at', __('Created at'));
-        $show->field('updated_at', __('Updated at'));
+        $show->field('start_date', __('Start date'))->diffForHumans();
+        $show->field('end_date', __('End date'))->diffForHumans();
+        $show->field('created_at', __('Created at'))->diffForHumans();
+        $show->field('updated_at', __('Updated at'))->diffForHumans();
 
         return $show;
     }

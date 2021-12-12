@@ -13,15 +13,22 @@ use Inertia\Inertia;
 class QuizController extends Controller
 {
     public function takeQuiz(Quiz $quiz){
+        if(Carbon::createFromDate($quiz->start_date)->greaterThan(Carbon::now())){
+            return redirect()->route('dashboard')->with('message', "The quiz hasn't started yet");
+        }
+        if($quiz->questions->count() <= 0){
+            return redirect()->route('dashboard')->with('message', "The quiz is still being created");
+        }
         $user= auth()->user();
         $assessment= Assessment::where('user_id', $user->id)->where('quiz_id', $quiz->id)->first();
         if($assessment){
             if($assessment->score || $assessment->finished_at){
-                return abort(404);
+                return redirect()->route('dashboard')->with('message', 'You have already completed this test.');
             }
             if($assessment->started_at){
-                if(Carbon::createFromDate($assessment->started_at)->addMinutes($quiz->duration)->greaterThanOrEqualTo(Carbon::now())){
-                    $assessment= $this->evaluateScore($assessment);
+                if(Carbon::createFromDate($assessment->started_at)->addMinutes($quiz->duration)->lessThanOrEqualTo(Carbon::now())){
+                    $this->evaluateScore($assessment);
+                    return redirect()->route('dashboard')->with('message', "Time is up. You cannot continue the quiz.");
                 }
             }
         }else{
@@ -43,6 +50,7 @@ class QuizController extends Controller
         foreach ($assessment->answers as $answer){
             $score+= $answer->correct ? 1 : 0;
         }
+        $assessment->score= $score;
         $assessment->save();
         return $assessment;
     }
@@ -63,6 +71,6 @@ class QuizController extends Controller
             $newAnswer->save();
         }
         $this->evaluateScore($assessment);
-        return redirect()->route('dashboard')->with('status', 'The quiz was finished successfully.');
+        return redirect()->route('dashboard')->with('message', 'The quiz was finished successfully.');
     }
 }

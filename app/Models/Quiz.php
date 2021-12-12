@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Quiz extends Model
 {
     use HasFactory;
+    protected $dates= [
+        "start_date",
+        "end_date"
+    ];
     public function questions()
     {
         return $this->belongsToMany(Question::class);
@@ -15,5 +19,8 @@ class Quiz extends Model
     public function answers()
     {
         return $this->hasMany(Answer::class);
+    }
+    public function assessments(){
+        return $this->hasMany(Assessment::class);
     }
 }
